@@ -62,6 +62,9 @@ class RealTimeGoogleSearchProvider:
         seen_add = seen.add
         return [x for x in filtered_urls if not (x in seen or seen_add(x))]
 
+
+
+
 if __name__ == '__main__':
     s = RealTimeGoogleSearchProvider(animation=True)
     print(s.search("who is modi?"))
