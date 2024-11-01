@@ -4,6 +4,7 @@ pyproject.toml
 setup.cfg
 src/searchlite/__init__.py
 src/searchlite/optimized_multi_query_searcher.py
+src/searchlite/providers.py
 src/searchlite/searcher.py
 src/searchlite.egg-info/PKG-INFO
 src/searchlite.egg-info/SOURCES.txt
