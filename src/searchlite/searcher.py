@@ -1,8 +1,7 @@
 import re
 import asyncio
 from typing import List
-from src.searchlite.web_search import OptimizedMultiQuerySearcher
-
+from .optimized_multi_query_searcher import OptimizedMultiQuerySearcher
 class RealTimeGoogleSearchProvider:
     def __init__(
         self,
