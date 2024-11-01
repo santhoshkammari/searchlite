@@ -1,3 +1,3 @@
-from .providers import google,duckduckgo,ask,bing,yahoo
+from .providers import google,bing
 from .searcher import RealTimeGoogleSearchProvider
 
