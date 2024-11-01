@@ -41,6 +41,12 @@ class RealTimeGoogleSearchProvider:
     def search_batch(self, batch_queries,max_urls=5) -> List[str]:
         return asyncio.run(self._async_batch_search(batch_queries,max_urls=max_urls))
 
+
+    def __call__(self, query:str|list,*args, **kwargs):
+        if isinstance(query,str):
+            return self.search(query,*args,**kwargs)
+        return self.search_batch(query,*args,**kwargs)
+
     def _is_hash(self, x):
         return '#' in x
 
