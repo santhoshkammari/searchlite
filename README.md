@@ -1,6 +1,7 @@
 # SearchLite 🔍
 
 A lightning-fast, asynchronous real-time Google Search API wrapper with built-in optimization for batch queries.
+selenium + chromedriver for endless google search results
 
 [![PyPI version](https://img.shields.io/badge/pypi-v1.0.0-blue.svg)](https://pypi.org/project/searchlite/)
 [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
