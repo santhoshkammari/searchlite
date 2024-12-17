@@ -2,6 +2,7 @@ import re
 import asyncio
 from typing import List
 from .optimized_multi_query_searcher import OptimizedMultiQuerySearcher
+
 class RealTimeGoogleSearchProvider:
     def __init__(
         self,
@@ -16,14 +17,15 @@ class RealTimeGoogleSearchProvider:
         self.animation = animation
 
 
-    def search(self, query: str,max_urls=5) -> List[str]:
+    def search(self, query: str,max_urls=50) -> List[str]:
         with OptimizedMultiQuerySearcher(chromedriver_path=self.chromedriver_path,
                                                     max_workers=self.max_workers,
                                                     animation=self.animation) as searcher:
-            return searcher.search_single_query(query,search_provider=self.search_provider).urls[:max_urls]
+            res = searcher.search_single_query(query, search_provider=self.search_provider)
+            return res.urls[:max_urls]
 
 
-    async def _async_batch_search(self, batch_queries,max_urls=5) -> List[str]:
+    async def _async_batch_search(self, batch_queries,max_urls=50) -> List[str]:
         with OptimizedMultiQuerySearcher(chromedriver_path=self.chromedriver_path,
                                          max_workers=self.max_workers,
                                          animation=self.animation) as searcher:

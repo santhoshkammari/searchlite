@@ -10,7 +10,7 @@ def check_os_sys():
     else:
         return "Other OS"
 
-def google(query,max_urls=5,animation=False,
+def google(query,max_urls=10,animation=False,
            chromedriver_path=None):
     if chromedriver_path is None:
         cur_sys = check_os_sys()
@@ -21,7 +21,7 @@ def google(query,max_urls=5,animation=False,
     return search.search(query,max_urls=max_urls)
 
 
-def bing(query,max_urls=5,animation=False,
+def bing(query,max_urls=10,animation=False,
          chromedriver_path=None):
     if chromedriver_path is None:
         cur_sys = check_os_sys()

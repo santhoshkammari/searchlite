@@ -1,9 +1,12 @@
 import asyncio
 import logging
+import re
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import field
 from multiprocessing import cpu_count
 from urllib.parse import quote_plus
 
+from bs4 import  BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -13,13 +16,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from pydantic import BaseModel
 from typing import List
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
 
 class SearchResult(BaseModel):
     query: str
-    title_and_links: list = []
-    urls: list = []
+    urls: list = field(default_factory=list)
     search_provider: str  = ""
     page_source:str = ""
 
@@ -80,20 +80,26 @@ class OptimizedMultiQuerySearcher:
             WebDriverWait(driver, 5).until(
                 EC.presence_of_element_located((By.ID, self.params[search_provider]["search"]))
             )
-            urls,search_results = self.javascript_based(search_provider=search_provider,
-                                          num_results=num_results,
-                                         driver = driver
-                                         )
+            # urls,search_results = self.javascript_based(search_provider=search_provider,
+            #                               num_results=num_results,
+            #                              driver = driver
+            #                              )
+
+            soup = BeautifulSoup(driver.page_source,'html.parser')
+            atags = soup.find_all('a',
+                          attrs={'href': re.compile("^https://"),
+                                 # 'aria-label': True
+                                 })
+
+            urls = self.extract_urls(atags)
 
             return SearchResult(
                 query=query,
-                title_and_links=search_results,
                 urls=urls,
                 search_provider = search_provider,
                 page_source = driver.page_source
             )
         except Exception as e:
-            logger.error(f"An error occurred while searching '{query}': {str(e)}")
             return SearchResult(query=query)
         finally:
             self._return_driver(driver)
@@ -143,6 +149,27 @@ class OptimizedMultiQuerySearcher:
         search_results = driver.execute_script(script, num_results)
         urls = [x['link'] for x in search_results if len(x['link']) > 0]
         return urls,search_results
+
+    def extract_urls(self, atags):
+        all_urls = [u.get("href") for u in atags if u.get("href")]
+
+        filtered_urls = []
+        for url in all_urls:
+            if 'google' not in url:
+                filtered_urls.append(url)
+
+        yt_urls = []
+        non_yt_urls = []
+        for url in filtered_urls:
+            if 'youtube' in url:
+                yt_urls.append(url)
+            else:
+                non_yt_urls.append(url)
+
+        final_urls = non_yt_urls + yt_urls
+
+        return final_urls
+
 
 
 if __name__ == '__main__':
